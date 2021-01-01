@@ -69,9 +69,8 @@ source("./src/helper01_138nhs_2018_hab-2.R")                                # Th
 site <- site %>%
   select(-c(hab_1, hab_geom)) %>%
   left_join(habs, by = "site_number") %>%
-  left_join(select(sf_hs, site_number, hab_area, utm_x, utm_y, epsg)) %>%  #adds centroid coords in utm
-  select(-geometry) #%>%
-#  left_join(water)
+  left_join(select(sf_hs, site_number, hab_area, utm_x, utm_y, epsg), by = "site_number") %>%  #adds centroid coords in utm
+  select(-geometry)
 
 site$hab_1[site$hab_1 == "MA"] <- "MC"
 site$hab_geom[site$hab_geom == "BA"] <- NA
@@ -147,7 +146,7 @@ widths <- trans %>%
 haul_tmp <- data$haul %>%
     rename(site_number = sample_num,
            notes_haul = comments) %>%
-  left_join(select(site, site_number, date)) %>%
+  left_join(select(site, site_number, date), by = "site_number") %>%
 
 
     mutate(datetime = as.POSIXct(paste(ymd(date), strftime(time, format = "%H:%M:%S", tz = "UTC"))),
